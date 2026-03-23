@@ -20,20 +20,7 @@ and LLMs across questions of increasing clinical complexity.
 
 12 drugs covering major therapeutic areas:
 
-| Drug | Category | Key Feature |
-|------|----------|-------------|
-| Warfarin | Anticoagulant | Extensive interactions, narrow therapeutic index |
-| Atorvastatin | Cardiovascular | CYP3A4 metabolism, statin myopathy |
-| Metformin | Antidiabetic | Renal excretion, lactic acidosis risk |
-| Clarithromycin | Antibiotic | Potent CYP3A4 inhibitor |
-| Ciprofloxacin | Antibiotic | QT prolongation, CYP1A2 inhibition |
-| Sertraline | Antidepressant | SSRI, serotonin syndrome risk |
-| Diazepam | Benzodiazepine | CNS depression, accumulation in elderly |
-| Ibuprofen | NSAID | COX inhibition, renal effects |
-| Tamoxifen | Oncology | CYP2D6 prodrug, pharmacogenomics |
-| Metoprolol | Cardiovascular | Beta-blocker, diabetes interaction |
-| Prednisolone | Corticosteroid | Immunosuppression, metabolic effects |
-| Insulin glargine | Antidiabetic | Basal insulin, hypoglycemia risk |
+
 
 ## What We Compare
 
