@@ -1,1 +1,172 @@
-# PharmRAG
+# PharmRAG — Comparing RAG Systems on EMA Drug Leaflets
+
+A systematic comparison of Retrieval-Augmented Generation (RAG) configurations 
+on official European Medicines Agency (EMA) Summary of Product Characteristics 
+(SmPC) documents, evaluated on clinically-motivated pharmacological questions.
+
+## Motivation
+
+Drug leaflets contain dense, structured clinical information — mechanisms of 
+action, pharmacokinetics, interactions, contraindications. They represent a 
+real-world use case for RAG systems in the biomedical domain.
+
+The central question: **does a biomedical-specific embedding model retrieve 
+more relevant sections from drug leaflets than a generic one?**
+
+This project systematically compares embedding models, chunking strategies, 
+and LLMs across questions of increasing clinical complexity.
+
+## Drug Corpus
+
+12 drugs covering major therapeutic areas:
+
+| Drug | Category | Key Feature |
+|------|----------|-------------|
+| Warfarin | Anticoagulant | Extensive interactions, narrow therapeutic index |
+| Atorvastatin | Cardiovascular | CYP3A4 metabolism, statin myopathy |
+| Metformin | Antidiabetic | Renal excretion, lactic acidosis risk |
+| Clarithromycin | Antibiotic | Potent CYP3A4 inhibitor |
+| Ciprofloxacin | Antibiotic | QT prolongation, CYP1A2 inhibition |
+| Sertraline | Antidepressant | SSRI, serotonin syndrome risk |
+| Diazepam | Benzodiazepine | CNS depression, accumulation in elderly |
+| Ibuprofen | NSAID | COX inhibition, renal effects |
+| Tamoxifen | Oncology | CYP2D6 prodrug, pharmacogenomics |
+| Metoprolol | Cardiovascular | Beta-blocker, diabetes interaction |
+| Prednisolone | Corticosteroid | Immunosuppression, metabolic effects |
+| Insulin glargine | Antidiabetic | Basal insulin, hypoglycemia risk |
+
+## What We Compare
+
+### Embedding Models
+
+| Model | Type | Dimensions |
+|-------|------|-----------|
+| `all-MiniLM-L6-v2` | Generic small | 384 |
+| `bge-large-en-v1.5` | Generic large | 1024 |
+| `NeuML/pubmedbert-base-embeddings` | Biomedical | 768 |
+| `abhinand/MedEmbed-small-v0.1` | Clinical/RAG | 384 |
+
+### Chunking Strategies
+
+- **Naive**: fixed-size token windows (RecursiveCharacterTextSplitter)
+- **Smart**: respects SmPC section structure (4.1, 4.2, 4.3...)
+
+### LLM for Generation
+
+| Model | Provider | Type |
+|-------|----------|------|
+| Llama 3.1 8B | Groq | Small baseline |
+| Llama 3.3 70B | Groq | Large, high quality |
+| Mixtral 8x7B | Groq | Mixture-of-experts |
+| Gemini 1.5 Flash | Google | Google ecosystem |
+
+## Evaluation Dataset
+
+14 questions across 5 complexity levels, with ground truth answers 
+generated from official SmPC documents:
+
+| Level | Type | Example |
+|-------|------|---------|
+| L1 | Direct retrieval | "What is the starting dose of metformin?" |
+| L2 | Multi-section synthesis | "Why should metformin be avoided in renal impairment?" |
+| L4 | Molecular mechanisms | "How does CYP2D6 polymorphism affect tamoxifen efficacy?" |
+| L5 | Drug-drug interactions | "Compare bleeding risk of clarithromycin vs ciprofloxacin in a patient on warfarin" |
+| L6 | Inverse clinical reasoning | "A patient develops muscle pain and elevated CK — which drug is responsible?" |
+
+### Evaluation Methods
+
+- **L1**: keyword matching against ground truth
+- **L2**: hybrid (keyword + LLM-judge)
+- **L4-L6**: LLM-as-judge (Gemini 1.5 Flash) with explicit rubric
+
+Rubric for LLM-judge (1-5 scale):
+- Factual accuracy
+- Completeness
+- Clinical reasoning quality
+
+## Repository Structure
+```
+notebook.ipynb              # Single notebook: data → indexing → RAG → evaluation
+pharmrag_questions.tsv      # 14 evaluation questions with ground truth
+README.md
+```
+
+## Requirements
+```
+langchain
+langchain-community
+langchain-groq
+langchain-google-genai
+langchain-chroma
+chromadb
+sentence-transformers
+pymupdf
+ragas
+pandas
+matplotlib
+seaborn
+requests
+tqdm
+datasets
+```
+
+Install with:
+```bash
+pip install langchain langchain-community langchain-groq langchain-google-genai \
+    langchain-chroma chromadb sentence-transformers pymupdf ragas \
+    pandas matplotlib seaborn requests tqdm datasets
+```
+
+## API Keys Required
+
+- **Groq**: free tier at [console.groq.com](https://console.groq.com)
+- **Google**: free tier at [aistudio.google.com](https://aistudio.google.com)
+
+Store as Colab Secrets before running.
+
+## Usage
+
+1. Open `notebook.ipynb` in Google Colab (GPU recommended for embedding)
+2. Add `GROQ_API_KEY` and `GOOGLE_API_KEY` to Colab Secrets
+3. Mount Google Drive (checkpoints persist between sessions)
+4. Upload `pharmrag_questions.tsv` to `PharmRAG/eval/` on Drive
+5. Run cells sequentially
+
+The notebook handles EMA PDF download automatically.
+
+## Key Design Decisions
+
+**Why EMA SmPCs?**
+Official regulatory documents with standardized structure — sections 4.1 
+through 5.2 follow a consistent format across all drugs, enabling 
+structure-aware chunking.
+
+**Why smart chunking?**
+A question about drug interactions should retrieve section 4.5, not a 
+random 500-token window that happens to mention the word "interaction". 
+Preserving section boundaries is the core hypothesis of this project.
+
+**Why biomedical embeddings?**
+Clinical language has specific terminology — "renal insufficiency", 
+"QT prolongation", "CYP3A4 inhibitor" — that generic models may not 
+handle well. Biomedical models trained on PubMed and clinical notes 
+should bridge the gap between patient language and clinical terminology.
+
+## Limitations
+
+- PDF extraction quality depends on EMA document formatting
+- Ground truth answers generated by Claude Sonnet — not verified by clinicians
+- Small evaluation set (14 questions) — results should be interpreted carefully
+- EMA URLs may change over time — manual update may be required
+
+## Disclaimer
+
+This project is for educational purposes only. No answer produced by this 
+system constitutes medical advice. All outputs should be verified against 
+official drug documentation before any clinical use.
+
+```
+
+## License
+
+MIT
