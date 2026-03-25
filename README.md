@@ -26,12 +26,7 @@ and LLMs across questions of increasing clinical complexity.
 
 ### Embedding Models
 
-| Model | Type | Dimensions |
-|-------|------|-----------|
-| `all-MiniLM-L6-v2` | Generic small | 384 |
-| `bge-large-en-v1.5` | Generic large | 1024 |
-| `NeuML/pubmedbert-base-embeddings` | Biomedical | 768 |
-| `abhinand/MedEmbed-small-v0.1` | Clinical/RAG | 384 |
+
 
 ### Chunking Strategies
 
@@ -40,12 +35,6 @@ and LLMs across questions of increasing clinical complexity.
 
 ### LLM for Generation
 
-| Model | Provider | Type |
-|-------|----------|------|
-| Llama 3.1 8B | Groq | Small baseline |
-| Llama 3.3 70B | Groq | Large, high quality |
-| Mixtral 8x7B | Groq | Mixture-of-experts |
-| Gemini 1.5 Flash | Google | Google ecosystem |
 
 ## Evaluation Dataset
 
