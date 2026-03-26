@@ -18,7 +18,7 @@ and LLMs across questions of increasing clinical complexity.
 
 ## Drug Corpus
 
-12 drugs covering major therapeutic areas:
+27 drugs covering major therapeutic areas:
 
 
 
@@ -63,7 +63,7 @@ Rubric for LLM-judge (1-5 scale):
 ## Repository Structure
 ```
 notebook.ipynb              # Single notebook: data → indexing → RAG → evaluation
-pharmrag_questions.tsv      # 14 evaluation questions with ground truth
+pharmrag_questions.tsv      # Evaluation questions with ground truth
 README.md
 ```
 
